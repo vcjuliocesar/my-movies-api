@@ -38,10 +38,7 @@ def get_movies():
 #url parameter
 @app.get('/movies/{id}',tags=['Movies'])
 def get_movie(id:int):
-    
-    movie = list(filter(lambda m: m['id'] == id,movies))
-    
-    return movie[0] if len(movie) > 0 else []
+    return [movie for movie in movies if movie['id'] == id]
 
 #query parameters
 @app.get('/movies/',tags=['Movies'])
@@ -62,21 +59,20 @@ def create_movie(id:int = Body(),title:str = Body(),overview:str = Body(),year:i
 
 @app.put('/movies/{id}',tags=['Movies'])
 def update_movie(id:int,title:str = Body(),overview:str = Body(),year:int = Body(),rating:float = Body(),category:str = Body()):
-    movie = list(filter(lambda m: m['id'] == id,movies))
-        
-    if movie[0] in movies:
-        movies[movie.index(movie[0])]['title'] = title
-        movies[movie.index(movie[0])]['overview'] = overview
-        movies[movie.index(movie[0])]['year'] = year
-        movies[movie.index(movie[0])]['rating'] = rating
-        movies[movie.index(movie[0])]['category'] = category
+    for movie in movies:
+        if movie['id'] == id:
+            movie['title'] = title
+            movie['overview'] = overview
+            movie['year'] = year
+            movie['rating'] = rating
+            movie['category'] = category
     return movies
 
 @app.delete('/movies/{id}',tags=['Movies'])
 def delete_movie(id:int):
-    movie = list(filter(lambda m: m['id'] == id,movies))
+    for movie in movies:
     
-    if movie[0] in movies:
-        del movies[movie.index(movie[0])]
+        if movie['id'] == id:
+            movies.remove(movie)
     
     return movies
