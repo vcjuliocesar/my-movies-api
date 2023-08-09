@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Body
 from fastapi.responses import HTMLResponse
 
 movies = [
@@ -47,4 +47,36 @@ def get_movie(id:int):
 @app.get('/movies/',tags=['Movies'])
 def get_movie_by_category(category:str,year:str):
     return [movie for movie in movies if (movie['category'] == category and movie['year'] == year)]
-     
+
+@app.post('/movies',tags=['Movies'])
+def create_movie(id:int = Body(),title:str = Body(),overview:str = Body(),year:int = Body(),rating:float = Body(),category:str = Body()):
+    movies.append({
+        'id': id,
+        'title': title,
+        'overview': overview,
+        'year': year,
+        'rating':rating,
+        'category': category 
+    })
+    return movies
+
+@app.put('/movies/{id}',tags=['Movies'])
+def update_movie(id:int,title:str = Body(),overview:str = Body(),year:int = Body(),rating:float = Body(),category:str = Body()):
+    movie = list(filter(lambda m: m['id'] == id,movies))
+        
+    if movie[0] in movies:
+        movies[movie.index(movie[0])]['title'] = title
+        movies[movie.index(movie[0])]['overview'] = overview
+        movies[movie.index(movie[0])]['year'] = year
+        movies[movie.index(movie[0])]['rating'] = rating
+        movies[movie.index(movie[0])]['category'] = category
+    return movies
+
+@app.delete('/movies/{id}',tags=['Movies'])
+def delete_movie(id:int):
+    movie = list(filter(lambda m: m['id'] == id,movies))
+    
+    if movie[0] in movies:
+        del movies[movie.index(movie[0])]
+    
+    return movies
