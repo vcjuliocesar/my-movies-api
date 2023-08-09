@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Body
+from fastapi import FastAPI,Body,Path,Query
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel,Field
 from typing import Optional
@@ -43,7 +43,7 @@ class Movie(BaseModel):
                 'id': 1,
                 'title': 'My movie',
                 'overview': "En un exuberante planeta llamado Pandora viven los Na'vi, seres que ...",
-                'year': 2022,
+                'year': 2023,
                 'rating': 7.8,
                 'category': 'Acción',  
             }
@@ -60,12 +60,12 @@ def get_movies():
 
 #url parameter
 @app.get('/movies/{id}',tags=['Movies'])
-def get_movie(id:int):
+def get_movie(id:int = Path(ge=1,le=2000)):
     return [movie for movie in movies if movie['id'] == id]
 
 #query parameters
 @app.get('/movies/',tags=['Movies'])
-def get_movie_by_category(category:str,year:str):
+def get_movie_by_category(category:str = Query(min_length=5,max_length=15),year:str = Query(le=2023)):
     return [movie for movie in movies if (movie['category'] == category and movie['year'] == year)]
 
 @app.post('/movies',tags=['Movies'])
