@@ -60,7 +60,10 @@ def message():
 
 @app.post('/login',tags=['auth'])
 def login(user:User):
-    return user
+    if user.email == "admin@gmail.com" and user.password == "admin":
+        token: str = create_token(user.dict())
+        return JSONResponse(status_code=200,content=token)
+    return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED,content={"message":"Unauthorized"})
 
 #all movies
 @app.get('/movies',tags=['Movies'],response_model=List[Movie],status_code=status.HTTP_200_OK)
