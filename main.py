@@ -6,6 +6,8 @@ from typing import Any, Coroutine, Optional,List
 #from starlette.requests import Request
 from jwt_manager import create_token,validate_token
 from fastapi.security import HTTPBearer
+from config.database import Session,engine,Base
+from models.movie import Movie
 
 movies = [
     {
@@ -32,6 +34,8 @@ app.title = "My first app in FastAPI"
 #change version
 app.version = "0.0.1"
 #tags for group routes
+
+Base.metadata.create_all(bind=engine)
 
 class JWTBearer(HTTPBearer):
    async def __call__(self, request: Request):
