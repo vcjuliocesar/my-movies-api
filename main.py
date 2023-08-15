@@ -7,7 +7,7 @@ from typing import Any, Coroutine, Optional,List
 from jwt_manager import create_token,validate_token
 from fastapi.security import HTTPBearer
 from config.database import Session,engine,Base
-from models.movie import Movie
+from models.movie import Movie as MovieModel
 
 movies = [
     {
@@ -98,7 +98,10 @@ def get_movie_by_category(category:str = Query(min_length=5,max_length=15),year:
 
 @app.post('/movies',tags=['Movies'],response_model=dict,status_code=201)
 def create_movie(movie:Movie) -> dict:
-    movies.append(movie)
+    db = Session()
+    new_movie = MovieModel(**movie.dict())
+    db.add(new_movie)
+    db.commit()
     return JSONResponse(status_code=201,content={"message":"Movie created successfully"})
 
 @app.put('/movies/{id}',tags=['Movies'],response_model=dict,status_code=200)
